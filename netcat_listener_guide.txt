@@ -1,0 +1,72 @@
+=== Netcat Listener on Port 8080 ===
+
+INSTALLATION (if not already installed):
+----------------------------------------
+# Install netcat-openbsd (recommended, more features):
+sudo apt install -y netcat-openbsd
+
+# OR install netcat-traditional:
+sudo apt install -y netcat-traditional
+
+
+NETCAT LISTENER COMMANDS:
+-------------------------
+
+1. Basic TCP listener on port 8080:
+   nc -l -p 8080
+
+2. Verbose listener (shows connections):
+   nc -l -v -p 8080
+
+3. Keep listener open after client disconnects:
+   nc -l -k -p 8080
+
+4. Listen on specific interface (e.g., all interfaces):
+   nc -l -p 8080 0.0.0.0
+
+5. Save received data to file:
+   nc -l -p 8080 > received_data.txt
+
+6. Execute command on connection (DANGEROUS - use carefully):
+   nc -l -p 8080 -e /bin/bash
+
+
+COMMON OPTIONS:
+--------------
+-l          Listen mode (server)
+-p <port>   Specify port number
+-v          Verbose output
+-k          Keep listening after disconnect
+-n          Don't resolve hostnames
+-u          UDP mode instead of TCP
+-e <cmd>    Execute command on connection
+-w <sec>    Timeout for connections
+
+
+TESTING THE LISTENER:
+--------------------
+# From another terminal or machine:
+echo "Hello from client" | nc localhost 8080
+
+# Or for interactive connection:
+nc localhost 8080
+
+
+FIREWALL NOTE:
+--------------
+If running on a cloud instance, ensure port 8080 is allowed in security groups/firewall rules.
+
+
+EXAMPLES:
+---------
+# Simple HTTP response server:
+while true; do echo -e "HTTP/1.1 200 OK\n\nHello World" | nc -l -p 8080 -q 1; done
+
+# Chat server:
+nc -l -k -v -p 8080
+
+# File transfer server:
+nc -l -p 8080 < file_to_send.txt
+
+# Receive file:
+nc -l -p 8080 > received_file.txt
