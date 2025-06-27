@@ -369,3 +369,112 @@ This appears to be a Kubernetes-related project called "kagent" (Kubernetes Agen
 - Web-based user interface
 - Helm charts for deployment
 - Comprehensive documentation and development setup
+
+## 7. Linux Environment Details
+
+### System Information
+```bash
+# Kernel Information
+$ uname -a
+Linux cursor 6.8.0-1024-aws #26-Ubuntu SMP Tue Feb 18 17:22:37 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+
+# Kernel Version Details
+$ cat /proc/version
+Linux version 6.8.0-1024-aws (buildd@lcy02-amd64-108) (x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #26-Ubuntu SMP Tue Feb 18 17:22:37 UTC 2025
+```
+
+### Operating System
+```bash
+$ cat /etc/os-release
+PRETTY_NAME="Ubuntu 25.04"
+NAME="Ubuntu"
+VERSION_ID="25.04"
+VERSION="25.04 (Plucky Puffin)"
+VERSION_CODENAME=plucky
+ID=ubuntu
+ID_LIKE=debian
+```
+
+### User Information
+```bash
+$ whoami && id
+ubuntu
+uid=1000(ubuntu) gid=1000(ubuntu) groups=1000(ubuntu),4(adm),20(dialout),24(cdrom),25(floppy),27(sudo),29(audio),30(dip),44(video),46(plugdev)
+```
+
+### System Resources
+#### Memory
+```bash
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:            61Gi       3.0Gi        48Gi        15Mi        11Gi        58Gi
+Swap:             0B          0B          0B
+```
+
+#### Disk Usage
+```bash
+$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         1.0T   29G  996G   3% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M  6.2M   58M  10% /dev/shm
+/dev/nvme1n1p1  1.0T   29G  996G   3% /etc/hosts
+```
+
+#### CPU Information
+- **Architecture**: x86_64
+- **CPU Model**: Intel(R) Xeon(R) Platinum 8488C
+- **CPU Cores**: 8 (4 cores × 2 threads per core)
+- **CPU Family**: 6, Model: 143
+- **Virtualization**: KVM (full virtualization)
+- **Cache**: L1d: 192 KiB, L1i: 128 KiB
+
+### Network Configuration
+- **Hostname**: cursor
+- **IP Address**: 172.17.0.4
+- **Container Environment**: Running in a containerized environment (likely Docker)
+
+### Installed Development Tools
+
+#### Programming Languages
+- **Python**: 3.13.3
+- **Node.js**: v22.16.0 (via NVM)
+- **Go**: 1.24.2 linux/amd64
+- **Rust**: 1.82.0 (f6e511eec 2024-10-15)
+- **GCC**: Available at `/usr/bin/gcc`
+
+#### Package Managers
+- **npm**: 10.9.2
+- **Cargo**: Available (Rust package manager)
+- **NVM**: Node Version Manager installed
+
+#### Tools Not Found
+- Docker (not installed)
+- kubectl (not installed)
+- Helm (not installed)
+- ip command (network tools not installed)
+
+### System Status
+```bash
+$ uptime
+23:19:14 up 31 min,  0 user,  load average: 0.02, 0.09, 0.10
+
+$ date
+Fri Jun 27 11:19:22 PM UTC 2025
+```
+
+### Environment Type
+- **Container**: Running inside a container (no systemd as init)
+- **Display**: Virtual X11 display (:99) via Xvfb
+- **Cursor Process**: Multiple Cursor-related processes running
+- **VM Daemon**: vm-daemon processes managing the environment
+
+### Key Observations
+1. This is a containerized Ubuntu 25.04 development environment
+2. Running on AWS infrastructure (kernel: aws)
+3. High memory allocation (61GB RAM)
+4. Large disk space (1TB)
+5. Modern Intel Xeon processor with 8 virtual CPUs
+6. Development tools pre-installed for multi-language development
+7. Virtual display setup for GUI applications
+8. No container orchestration tools installed (Docker/K8s)
