@@ -1,0 +1,57 @@
+
+
+=== NETWORK DISCOVERY SUMMARY ===
+Generated: Fri Jun 27 11:31:10 PM UTC 2025
+
+NETWORK TOPOLOGY:
+- Network: 172.17.0.0/24 (Docker network)
+- Our IP: 172.17.0.4 (cursor)
+
+DISCOVERED HOSTS (5 total):
+1. 172.17.0.1 (host.docker.internal) - Docker host/gateway
+   - Services: SSH (22), HTTP (80), Unknown service (1234)
+   - OS: Linux 4.15-5.19, possibly OpenWrt or MikroTik RouterOS
+2. 172.17.0.2 (ip-172-17-0-2.ec2.internal) - Another container
+3. 172.17.0.3 (ip-172-17-0-3.ec2.internal) - Another container
+4. 172.17.0.4 (cursor) - This container
+   - Services: Two unknown services on ports 26053, 26054 (likely Cursor IDE)
+5. 172.17.0.5 (ip-172-17-0-5.ec2.internal) - Another container
+
+NETWORK DETAILS:
+- Interface: eth0
+- Loopback: lo
+- Default Gateway: 172.17.0.1
+- All containers appear to be running on AWS EC2 (*.ec2.internal hostnames)
+
+KEY FINDINGS:
+- Running in a Docker container environment on AWS
+- 5 active hosts on the local subnet
+- Docker host (172.17.0.1) has SSH and web services exposed
+- Most containers have no exposed services (security best practice)
+- This container runs Cursor IDE services on high ports
+
+
+QUICK UDP SCAN:
+Host is up (0.000050s latency).
+53/udp    open|filtered domain
+67/udp    closed        dhcps
+68/udp    open|filtered dhcpc
+69/udp    closed        tftp
+123/udp   closed        ntp
+135/udp   closed        msrpc
+137/udp   open|filtered netbios-ns
+138/udp   open|filtered netbios-dgm
+139/udp   open|filtered netbios-ssn
+161/udp   open|filtered snmp
+162/udp   closed        snmptrap
+445/udp   open|filtered microsoft-ds
+500/udp   closed        isakmp
+514/udp   closed        syslog
+520/udp   open|filtered route
+631/udp   closed        ipp
+1434/udp  closed        ms-sql-m
+1900/udp  open|filtered upnp
+4500/udp  open|filtered nat-t-ike
+49152/udp closed        unknown
+
+Network discovery complete!

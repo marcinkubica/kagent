@@ -1,0 +1,246 @@
+=== Network Discovery Report ===
+Date: Fri Jun 27 11:29:39 PM UTC 2025
+Scanner: ubuntu@cursor
+Local IP: 172.17.0.4 
+
+1. PING SWEEP - Finding live hosts on 172.17.0.0/24
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-06-27 23:29 UTC
+Nmap scan report for host.docker.internal (172.17.0.1)
+Host is up (0.000036s latency).
+MAC Address: 1A:63:A7:0B:3B:1B (Unknown)
+Nmap scan report for ip-172-17-0-2.ec2.internal (172.17.0.2)
+Host is up (0.000016s latency).
+MAC Address: 02:00:89:3A:FC:C7 (Unknown)
+Nmap scan report for ip-172-17-0-3.ec2.internal (172.17.0.3)
+Host is up (0.000014s latency).
+MAC Address: 46:48:50:C4:00:04 (Unknown)
+Nmap scan report for ip-172-17-0-5.ec2.internal (172.17.0.5)
+Host is up (0.000021s latency).
+MAC Address: 8A:5A:E3:49:7C:AD (Unknown)
+Nmap scan report for cursor (172.17.0.4)
+Host is up.
+Nmap done: 256 IP addresses (5 hosts up) scanned in 1.98 seconds
+
+2. PORT SCAN - Scanning common ports on discovered hosts
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-06-27 23:29 UTC
+Nmap scan report for host.docker.internal (172.17.0.1)
+Host is up (0.0000030s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT     STATE SERVICE  VERSION
+22/tcp   open  ssh      OpenSSH 9.6p1 Ubuntu 3ubuntu13.8 (Ubuntu Linux; protocol 2.0)
+80/tcp   open  http     BaseHTTPServer 0.6 (Python 3.12.3)
+1234/tcp open  hotline?
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port1234-TCP:V=7.95%I=7%D=6/27%Time=685F297A%P=x86_64-pc-linux-gnu%r(NU
+SF:LL,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0\x05\0\0@\0\0\x06\0\0@\0
+SF:")%r(GetRequest,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0\x05\0\0@\0
+SF:\0\x06\0\0@\0")%r(JavaRMI,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0\
+SF:x05\0\0@\0\0\x06\0\0@\0")%r(GenericLines,1B,"\0\0\x12\x04\0\0\0\0\0\0\x
+SF:04\0\x10\0\0\0\x05\0\0@\0\0\x06\0\0@\0")%r(HTTPOptions,1B,"\0\0\x12\x04
+SF:\0\0\0\0\0\0\x04\0\x10\0\0\0\x05\0\0@\0\0\x06\0\0@\0")%r(RTSPRequest,1B
+SF:,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0\x05\0\0@\0\0\x06\0\0@\0")%r(
+SF:DNSStatusRequestTCP,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0\x05\0\
+SF:0@\0\0\x06\0\0@\0")%r(Help,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0
+SF:\x05\0\0@\0\0\x06\0\0@\0")%r(X11Probe,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\
+SF:0\x10\0\0\0\x05\0\0@\0\0\x06\0\0@\0")%r(LPDString,1B,"\0\0\x12\x04\0\0\
+SF:0\0\0\0\x04\0\x10\0\0\0\x05\0\0@\0\0\x06\0\0@\0")%r(LDAPBindReq,1B,"\0\
+SF:0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0\x05\0\0@\0\0\x06\0\0@\0")%r(LANDe
+SF:sk-RC,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0\x05\0\0@\0\0\x06\0\0
+SF:@\0")%r(TerminalServer,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0\0\x05
+SF:\0\0@\0\0\x06\0\0@\0")%r(NCP,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x10\0\0
+SF:\0\x05\0\0@\0\0\x06\0\0@\0")%r(afp,1B,"\0\0\x12\x04\0\0\0\0\0\0\x04\0\x
+SF:10\0\0\0\x05\0\0@\0\0\x06\0\0@\0");
+MAC Address: 1A:63:A7:0B:3B:1B (Unknown)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap scan report for ip-172-17-0-2.ec2.internal (172.17.0.2)
+Host is up (0.0000020s latency).
+All 1000 scanned ports on ip-172-17-0-2.ec2.internal (172.17.0.2) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: 02:00:89:3A:FC:C7 (Unknown)
+
+Nmap scan report for ip-172-17-0-3.ec2.internal (172.17.0.3)
+Host is up (0.0000020s latency).
+All 1000 scanned ports on ip-172-17-0-3.ec2.internal (172.17.0.3) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: 46:48:50:C4:00:04 (Unknown)
+
+Nmap scan report for ip-172-17-0-5.ec2.internal (172.17.0.5)
+Host is up (0.0000020s latency).
+All 1000 scanned ports on ip-172-17-0-5.ec2.internal (172.17.0.5) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: 8A:5A:E3:49:7C:AD (Unknown)
+
+Nmap scan report for cursor (172.17.0.4)
+Host is up (0.0000010s latency).
+All 1000 scanned ports on cursor (172.17.0.4) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 5 IP addresses (5 hosts up) scanned in 6.30 seconds
+
+3. OS DETECTION - Identifying operating systems
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-06-27 23:30 UTC
+Nmap scan report for host.docker.internal (172.17.0.1)
+Host is up (0.000044s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+1234/tcp open  hotline
+MAC Address: 1A:63:A7:0B:3B:1B (Unknown)
+Device type: general purpose|router
+Running: Linux 4.X|5.X, MikroTik RouterOS 7.X
+OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5 cpe:/o:mikrotik:routeros:7 cpe:/o:linux:linux_kernel:5.6.3
+OS details: Linux 4.15 - 5.19, OpenWrt 21.02 (Linux 5.4), MikroTik RouterOS 7.2 - 7.5 (Linux 5.6.3)
+Network Distance: 1 hop
+
+Nmap scan report for ip-172-17-0-2.ec2.internal (172.17.0.2)
+Host is up (0.0000020s latency).
+All 1000 scanned ports on ip-172-17-0-2.ec2.internal (172.17.0.2) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: 02:00:89:3A:FC:C7 (Unknown)
+
+Nmap scan report for ip-172-17-0-3.ec2.internal (172.17.0.3)
+Host is up (0.0000020s latency).
+All 1000 scanned ports on ip-172-17-0-3.ec2.internal (172.17.0.3) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: 46:48:50:C4:00:04 (Unknown)
+
+Nmap scan report for ip-172-17-0-5.ec2.internal (172.17.0.5)
+Host is up (0.0000020s latency).
+All 1000 scanned ports on ip-172-17-0-5.ec2.internal (172.17.0.5) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: 8A:5A:E3:49:7C:AD (Unknown)
+
+Nmap scan report for cursor (172.17.0.4)
+Host is up (0.0000010s latency).
+All 1000 scanned ports on cursor (172.17.0.4) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+
+OS detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 5 IP addresses (5 hosts up) scanned in 1.43 seconds
+
+4. LOCALHOST SCAN - Detailed scan of local machine
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-06-27 23:30 UTC
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000021s latency).
+Other addresses for localhost (not scanned): ::1
+Not shown: 65533 closed tcp ports (reset)
+PORT      STATE SERVICE VERSION
+26053/tcp open  unknown
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, Help, Kerberos, LANDesk-RC, LDAPBindReq, LDAPSearchReq, LPDString, NCP, RPCCheck, SIPOptions, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServer, TerminalServerCookie, X11Probe: 
+|     HTTP/1.1 400 Bad Request
+|     Connection: close
+|   FourOhFourRequest, GetRequest, HTTPOptions, RTSPRequest: 
+|     HTTP/1.1 404 Not Found
+|     Date: Fri, 27 Jun 2025 23:30:27 GMT
+|_    Connection: close
+26054/tcp open  unknown
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, Help, Kerberos, LDAPBindReq, LDAPSearchReq, LPDString, RPCCheck, SIPOptions, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServerCookie, X11Probe: 
+|     HTTP/1.1 400 Bad Request
+|     Connection: close
+|   FourOhFourRequest, GetRequest: 
+|     HTTP/1.1 403 Forbidden
+|     Content-Type: text/plain
+|     Date: Fri, 27 Jun 2025 23:30:27 GMT
+|     Connection: close
+|     Forbidden.
+|   HTTPOptions, RTSPRequest: 
+|     HTTP/1.1 405 Method Not Allowed
+|     Content-Type: text/plain
+|     Date: Fri, 27 Jun 2025 23:30:27 GMT
+|     Connection: close
+|_    Unsupported method OPTIONS
+2 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port26053-TCP:V=7.95%I=7%D=6/27%Time=685F2993%P=x86_64-pc-linux-gnu%r(G
+SF:etRequest,52,"HTTP/1\.1\x20404\x20Not\x20Found\r\nDate:\x20Fri,\x2027\x
+SF:20Jun\x202025\x2023:30:27\x20GMT\r\nConnection:\x20close\r\n\r\n")%r(HT
+SF:TPOptions,52,"HTTP/1\.1\x20404\x20Not\x20Found\r\nDate:\x20Fri,\x2027\x
+SF:20Jun\x202025\x2023:30:27\x20GMT\r\nConnection:\x20close\r\n\r\n")%r(RT
+SF:SPRequest,52,"HTTP/1\.1\x20404\x20Not\x20Found\r\nDate:\x20Fri,\x2027\x
+SF:20Jun\x202025\x2023:30:27\x20GMT\r\nConnection:\x20close\r\n\r\n")%r(RP
+SF:CCheck,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r
+SF:\n\r\n")%r(DNSVersionBindReqTCP,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\
+SF:r\nConnection:\x20close\r\n\r\n")%r(DNSStatusRequestTCP,2F,"HTTP/1\.1\x
+SF:20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(Help,2F,"HT
+SF:TP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(SS
+SF:LSessionReq,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20cl
+SF:ose\r\n\r\n")%r(TerminalServerCookie,2F,"HTTP/1\.1\x20400\x20Bad\x20Req
+SF:uest\r\nConnection:\x20close\r\n\r\n")%r(TLSSessionReq,2F,"HTTP/1\.1\x2
+SF:0400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(Kerberos,2F,
+SF:"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r
+SF:(SMBProgNeg,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20cl
+SF:ose\r\n\r\n")%r(X11Probe,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConn
+SF:ection:\x20close\r\n\r\n")%r(FourOhFourRequest,52,"HTTP/1\.1\x20404\x20
+SF:Not\x20Found\r\nDate:\x20Fri,\x2027\x20Jun\x202025\x2023:30:27\x20GMT\r
+SF:\nConnection:\x20close\r\n\r\n")%r(LPDString,2F,"HTTP/1\.1\x20400\x20Ba
+SF:d\x20Request\r\nConnection:\x20close\r\n\r\n")%r(LDAPSearchReq,2F,"HTTP
+SF:/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(LDAP
+SF:BindReq,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\
+SF:r\n\r\n")%r(SIPOptions,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnec
+SF:tion:\x20close\r\n\r\n")%r(LANDesk-RC,2F,"HTTP/1\.1\x20400\x20Bad\x20Re
+SF:quest\r\nConnection:\x20close\r\n\r\n")%r(TerminalServer,2F,"HTTP/1\.1\
+SF:x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(NCP,2F,"HT
+SF:TP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port26054-TCP:V=7.95%I=7%D=6/27%Time=685F2993%P=x86_64-pc-linux-gnu%r(G
+SF:etRequest,76,"HTTP/1\.1\x20403\x20Forbidden\r\nContent-Type:\x20text/pl
+SF:ain\r\nDate:\x20Fri,\x2027\x20Jun\x202025\x2023:30:27\x20GMT\r\nConnect
+SF:ion:\x20close\r\n\r\nForbidden\.")%r(HTTPOptions,8F,"HTTP/1\.1\x20405\x
+SF:20Method\x20Not\x20Allowed\r\nContent-Type:\x20text/plain\r\nDate:\x20F
+SF:ri,\x2027\x20Jun\x202025\x2023:30:27\x20GMT\r\nConnection:\x20close\r\n
+SF:\r\nUnsupported\x20method\x20OPTIONS")%r(RTSPRequest,8F,"HTTP/1\.1\x204
+SF:05\x20Method\x20Not\x20Allowed\r\nContent-Type:\x20text/plain\r\nDate:\
+SF:x20Fri,\x2027\x20Jun\x202025\x2023:30:27\x20GMT\r\nConnection:\x20close
+SF:\r\n\r\nUnsupported\x20method\x20OPTIONS")%r(RPCCheck,2F,"HTTP/1\.1\x20
+SF:400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(DNSVersionBin
+SF:dReqTCP,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\
+SF:r\n\r\n")%r(DNSStatusRequestTCP,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\
+SF:r\nConnection:\x20close\r\n\r\n")%r(Help,2F,"HTTP/1\.1\x20400\x20Bad\x2
+SF:0Request\r\nConnection:\x20close\r\n\r\n")%r(SSLSessionReq,2F,"HTTP/1\.
+SF:1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(Terminal
+SF:ServerCookie,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20c
+SF:lose\r\n\r\n")%r(TLSSessionReq,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r
+SF:\nConnection:\x20close\r\n\r\n")%r(Kerberos,2F,"HTTP/1\.1\x20400\x20Bad
+SF:\x20Request\r\nConnection:\x20close\r\n\r\n")%r(SMBProgNeg,2F,"HTTP/1\.
+SF:1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(X11Probe
+SF:,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n
+SF:")%r(FourOhFourRequest,76,"HTTP/1\.1\x20403\x20Forbidden\r\nContent-Typ
+SF:e:\x20text/plain\r\nDate:\x20Fri,\x2027\x20Jun\x202025\x2023:30:27\x20G
+SF:MT\r\nConnection:\x20close\r\n\r\nForbidden\.")%r(LPDString,2F,"HTTP/1\
+SF:.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n")%r(LDAPSea
+SF:rchReq,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r
+SF:\n\r\n")%r(LDAPBindReq,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnec
+SF:tion:\x20close\r\n\r\n")%r(SIPOptions,2F,"HTTP/1\.1\x20400\x20Bad\x20Re
+SF:quest\r\nConnection:\x20close\r\n\r\n");
+Device type: general purpose
+Running: Linux 2.6.X|5.X
+OS CPE: cpe:/o:linux:linux_kernel:2.6.32 cpe:/o:linux:linux_kernel:5 cpe:/o:linux:linux_kernel:6
+OS details: Linux 2.6.32, Linux 5.0 - 6.2
+Network Distance: 0 hops
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 12.87 seconds
+
+5. NETWORK INTERFACES AND ROUTING
+Available interfaces:
+    lo: 5717223  135745    0    0    0     0          0         0  5717223  135745    0    0    0     0       0          0
+  eth0: 241980581   37392    0    0    0     0          0         0 21085376   28279    0    0    0     0       0          0
+
+Routing table:
+Iface	Destination	Gateway 	Flags	RefCnt	Use	Metric	Mask		MTU	Window	IRTT                                                       
+eth0	00000000	010011AC	0003	0	0	0	00000000	0	0	0                                                                               
+eth0	000011AC	00000000	0001	0	0	0	0000FFFF	0	0	0                                                                               
+
+6. ARP CACHE - Known network neighbors
+IP address       HW type     Flags       HW address            Mask     Device
+172.17.0.2       0x1         0x2         02:00:89:3a:fc:c7     *        eth0
+172.17.0.1       0x1         0x2         1a:63:a7:0b:3b:1b     *        eth0
+172.17.0.5       0x1         0x2         8a:5a:e3:49:7c:ad     *        eth0
+172.17.0.3       0x1         0x2         46:48:50:c4:00:04     *        eth0
+
+=== END OF NETWORK DISCOVERY ===
