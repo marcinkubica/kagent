@@ -213,3 +213,85 @@ XAUTHORITY=/tmp/xvfb-run.C3jL8E/Xauthority
 - **Terminal Program**: VSCode/Cursor Nightly (v0.51.202506022349-nightly)
 - **Language/Locale**: en_US.UTF-8
 - **Display**: X11 backend with virtual display :99
+
+## 5. Available Tools
+
+### File Operations
+1. **read_file**
+   - Read contents of a file with line range specification
+   - Can view 500-1500 lines at a time or entire file
+   - Provides summary of lines outside the specified range
+
+2. **edit_file**
+   - Edit existing files or create new ones
+   - Uses special comment `// ... existing code ...` for unchanged code
+   - Preferred for files under 2500 lines
+
+3. **search_replace**
+   - Replace ONE occurrence of text in a file
+   - Requires unique identification with 3-5 lines of context before/after
+   - Must match file contents exactly including whitespace
+
+4. **delete_file**
+   - Delete a file at specified path
+   - Fails gracefully if file doesn't exist or operation is rejected
+
+5. **list_dir**
+   - List directory contents
+   - Quick discovery tool for understanding file structure
+   - Useful before diving into specific files
+
+### Search Tools
+6. **codebase_search**
+   - Semantic search across the codebase
+   - Finds code snippets relevant to search query
+   - Can target specific directories with glob patterns
+
+7. **grep_search**
+   - Fast exact regex searches using ripgrep engine
+   - Results capped at 50 matches
+   - Supports file type filtering with include/exclude patterns
+
+8. **file_search**
+   - Fuzzy filename matching
+   - Fast file location based on partial path knowledge
+   - Results capped at 10 matches
+
+### Execution and Information Tools
+9. **run_terminal_cmd**
+   - Execute terminal commands on user's system
+   - Requires user approval before execution
+   - Supports background execution for long-running processes
+
+10. **web_search**
+    - Search the web for real-time information
+    - Useful for current events, technology updates
+    - Returns relevant snippets and URLs
+
+11. **fetch_pull_request**
+    - Look up PR/issue by number, commit by hash, or git ref by name
+    - Returns full diff and metadata
+    - Useful for understanding structural changes in codebase
+
+12. **fetch_rules**
+    - Fetch user-provided rules about the codebase
+    - Helps with code generation and navigation
+    - Uses rule names from available_instructions section
+
+### Specialized Tools
+13. **edit_notebook**
+    - Edit Jupyter notebook cells
+    - Supports creating new cells and editing existing ones
+    - Handles cell languages: python, markdown, javascript, typescript, r, sql, shell, raw, other
+    - Cell indices are 0-based
+
+### Tool Usage Guidelines
+- **Parallel Execution**: Multiple read-only operations (read_file, grep_search, codebase_search) should always run in parallel
+- **Tool Selection**: 
+  - Use semantic search for conceptual queries
+  - Use grep for exact text/pattern matching
+  - Use file_search for fuzzy filename matching
+- **File Editing**:
+  - edit_file for files < 2500 lines
+  - search_replace for files > 2500 lines or specific replacements
+- **Information Gathering**: Always gather comprehensive information before making changes
