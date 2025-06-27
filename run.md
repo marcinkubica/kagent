@@ -295,3 +295,77 @@ XAUTHORITY=/tmp/xvfb-run.C3jL8E/Xauthority
   - edit_file for files < 2500 lines
   - search_replace for files > 2500 lines or specific replacements
 - **Information Gathering**: Always gather comprehensive information before making changes
+
+## 6. Workspace Directory Listing
+
+### Command: `ls -la`
+```bash
+workspace $workspace $ ls -la
+total 84
+drwxr-xr-x 1 ubuntu ubuntu  4096 Jun 27 23:03 .
+drwxr-xr-x 1 root   root      57 Jun 27 23:01 ..
+-rw-r--r-- 1 ubuntu ubuntu   261 Jun 27 23:01 CODE_OF_CONDUCT.md
+-rw-r--r-- 1 ubuntu ubuntu    86 Jun 27 23:01 CODEOWNERS
+-rw-r--r-- 1 ubuntu ubuntu  3765 Jun 27 23:01 CONTRIBUTION.md
+drwxr-xr-x 1 ubuntu ubuntu    25 Jun 27 23:01 design
+drwxr-xr-x 1 ubuntu ubuntu    49 Jun 27 23:01 .devcontainer
+-rw-r--r-- 1 ubuntu ubuntu  1675 Jun 27 23:01 DEVELOPMENT.md
+drwxr-xr-x 1 ubuntu ubuntu   124 Jun 27 23:17 .git
+drwxr-xr-x 1 ubuntu ubuntu    57 Jun 27 22:56 .github
+-rw-r--r-- 1 ubuntu ubuntu  3745 Jun 27 23:01 .gitignore
+drwxr-xr-x 1 ubuntu ubuntu   176 Jun 27 23:01 go
+drwxr-xr-x 1 ubuntu ubuntu   113 Jun 27 23:01 helm
+drwxr-xr-x 1 ubuntu ubuntu    81 Jun 27 23:01 img
+-rw-r--r-- 1 ubuntu ubuntu 11310 Jun 27 23:01 LICENSE
+-rw-r--r-- 1 ubuntu ubuntu 12340 Jun 27 23:01 Makefile
+drwxr-xr-x 1 ubuntu ubuntu  4096 Jun 27 23:01 python
+-rw-r--r-- 1 ubuntu ubuntu  4834 Jun 27 23:01 README.md
+-rw-r--r-- 1 ubuntu ubuntu 11852 Jun 27 23:11 run.md
+drwxr-xr-x 1 ubuntu ubuntu    24 Jun 27 23:01 scripts
+-rw-r--r-- 1 ubuntu ubuntu  1583 Jun 27 23:01 SECURITY.md
+drwxr-xr-x 1 ubuntu ubuntu  4096 Jun 27 23:01 ui
+```
+
+### Directory Contents Summary
+
+#### Hidden Files/Directories
+- `.git` - Git repository metadata
+- `.github` - GitHub-specific configuration (workflows, templates, etc.)
+- `.devcontainer` - Development container configuration
+- `.gitignore` - Git ignore patterns
+
+#### Project Directories
+- **go/** - Go language components (controller, CLI, autogen API)
+- **helm/** - Helm charts for Kubernetes deployments
+- **python/** - Python components (autogenstudio, kagent package)
+- **ui/** - User interface (Next.js/React application)
+- **scripts/** - Utility scripts
+- **design/** - Design documentation
+- **img/** - Image assets
+
+#### Documentation Files
+- **README.md** - Main project documentation
+- **LICENSE** - Project license (11KB)
+- **CODE_OF_CONDUCT.md** - Community guidelines
+- **CONTRIBUTION.md** - Contribution guidelines
+- **DEVELOPMENT.md** - Development setup instructions
+- **SECURITY.md** - Security policies
+- **run.md** - This configuration documentation file (11.8KB)
+
+#### Configuration Files
+- **Makefile** - Build automation (12KB)
+- **CODEOWNERS** - GitHub code ownership definitions
+
+### File Permissions
+- All directories: `drwxr-xr-x` (755) - Read/write/execute for owner, read/execute for group and others
+- All files: `-rw-r--r--` (644) - Read/write for owner, read-only for group and others
+- Owner: `ubuntu` (except root directory owned by `root`)
+- Group: `ubuntu` (except root directory with group `root`)
+
+### Project Type
+This appears to be a Kubernetes-related project called "kagent" (Kubernetes Agent) with:
+- Multi-language implementation (Go, Python, TypeScript/JavaScript)
+- Kubernetes operator/controller components
+- Web-based user interface
+- Helm charts for deployment
+- Comprehensive documentation and development setup
