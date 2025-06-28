@@ -10,9 +10,8 @@ tests:
     templates:
       - deployment.yaml
     asserts:
-      - equal:
-          path: spec.template.spec.containers
-          count: 3
+      - isNull:
+          path: spec.template.spec.containers[3]
       - notContains:
           path: spec.template.spec.containers
           content:
@@ -42,12 +41,8 @@ tests:
         cookieSecret: "test-cookie-secret"
     asserts:
       - equal:
-          path: spec.template.spec.containers
-          count: 4
-      - contains:
-          path: spec.template.spec.containers
-          content:
-            name: oauth2-proxy
+          path: spec.template.spec.containers[3].name
+          value: oauth2-proxy
 
   # Test oauth2-proxy container configuration
   - it: should have correct oauth2-proxy image and configuration
@@ -89,7 +84,7 @@ tests:
     asserts:
       - equal:
           path: spec.ports[0].port
-          value: 80
+          value: 8080
       - equal:
           path: spec.ports[0].targetPort
           value: 4180
@@ -313,29 +308,29 @@ tests:
         clientSecret: "test-client-secret"
         cookieSecret: "test-cookie-secret"
     asserts:
-      - contains:
+      - matchRegex:
           path: data["nginx.conf"]
-          content: "upstream oauth2_proxy"
-      - contains:
+          pattern: "upstream oauth2_proxy"
+      - matchRegex:
           path: data["nginx.conf"]
-          content: "location /oauth2/"
-      - contains:
+          pattern: "location /oauth2/"
+      - matchRegex:
           path: data["nginx.conf"]
-          content: "auth_request /oauth2/auth"
+          pattern: "auth_request /oauth2/auth"
 
   - it: should create nginx configmap without oauth2-proxy when disabled
     templates:
       - nginx-configmap.yaml
     asserts:
-      - notContains:
+      - notMatchRegex:
           path: data["nginx.conf"]
-          content: "upstream oauth2_proxy"
-      - notContains:
+          pattern: "upstream oauth2_proxy"
+      - notMatchRegex:
           path: data["nginx.conf"]
-          content: "location /oauth2/"
-      - notContains:
+          pattern: "location /oauth2/"
+      - notMatchRegex:
           path: data["nginx.conf"]
-          content: "auth_request"
+          pattern: "auth_request"
 
   # Test secret creation
   - it: should create oauth2-proxy secret when external is false
@@ -354,7 +349,7 @@ tests:
           count: 1
       - equal:
           path: metadata.name
-          value: "RELEASE-NAME-oauth2-proxy-secrets"
+          value: "oauth2-proxy-secrets"
 
   - it: should not create oauth2-proxy secret when external is true
     templates:

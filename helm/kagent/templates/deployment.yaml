@@ -240,9 +240,12 @@ spec:
             - --session-store-type={{ .Values.oauth2Proxy.config.sessionStoreType }}
             - --log-level={{ .Values.oauth2Proxy.config.logLevel }}
             {{- range .Values.oauth2Proxy.config.skipAuthPaths }}
-            - --skip-auth-regex=^{{ . }}
+            - --skip-auth-regex={{ . }}
             {{- end }}
             {{- range .Values.oauth2Proxy.config.extraArgs }}
+            - {{ . }}
+            {{- end }}
+            {{- range .Values.oauth2Proxy.extraArgs }}
             - {{ . }}
             {{- end }}
           env:

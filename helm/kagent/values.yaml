@@ -269,9 +269,9 @@ oauth2Proxy:
     
     # Skip authentication for specific paths
     skipAuthPaths:
-      - "/ping"
-      - "/health"
-      - "/ready"
+      - "^/ping"
+      - "^/health"
+      - "^/ready"
     
     # Additional command line arguments
     extraArgs: []

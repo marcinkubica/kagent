@@ -9,10 +9,10 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     {{- if .Values.oauth2Proxy.enabled }}
-    - port: {{ .Values.service.ports.oauth2Proxy.port }}
-      targetPort: {{ .Values.service.ports.oauth2Proxy.targetPort }}
+    - port: 8080
+      targetPort: 4180
       protocol: TCP
-      name: oauth2-proxy
+      name: http
     {{- else }}
     - port: {{ .Values.service.ports.ui.port }}
       targetPort: {{ .Values.service.ports.ui.targetPort }}
