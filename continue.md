@@ -1,4 +1,16 @@
 # OAuth2 Proxy Implementation - Next Steps
+<mission_critical_focus>
+- deliver MVP with a narrow scope of oauth2proxy working for web ui
+- be precise, meticulous, and use best software engineering principles (code and testing)
+</mission_critical_focus>
+
+<approach_critical>
+deep research on:
+- kagent codebase: folder ~/Projects/kagent
+- oauth2proxy codebase: folder ~/Projects/oauth2-proxy
+- current implementation is unfinished and buggy: do not assume it works
+- read git history for this branch to understand past work
+</approach_critical>
 
 ## 🎯 Current Status
 
