@@ -275,12 +275,12 @@ oauth2Proxy:
     # Email domain restrictions
     emailDomains: ["company.com", "partner.org"]
     
-    # Cookie settings
+    # Cookie settings - Financial compliance configuration
     cookieDomain: ".company.com"
     cookieSecure: true
     cookieHttpOnly: true
-    cookieSameSite: "lax"
-    cookieExpire: "168h"  # 7 days
+    cookieSameSite: "strict"  # Strict for financial compliance
+    cookieExpire: "30m"  # 30 minutes for financial compliance
     
     # Session configuration
     sessionStoreType: "cookie"
@@ -295,12 +295,18 @@ oauth2Proxy:
       - "/ready"
       - "/metrics"
     
-    # Additional oauth2-proxy arguments
+    # Additional oauth2-proxy arguments for financial compliance
     extraArgs:
       - "--skip-provider-button"
       - "--pass-basic-auth=false"
       - "--pass-access-token"
       - "--set-xauthrequest"
+      - "--request-logging=true"
+      - "--auth-logging=true"
+      - "--standard-logging=true"
+      - "--silence-ping-logging=false"
+      - "--cookie-csrf-per-request=true"
+      - "--cookie-csrf-expire=5m"
 ```
 
 ## Security Features

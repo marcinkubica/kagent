@@ -217,7 +217,7 @@ oauth2Proxy:
   image:
     registry: quay.io
     repository: oauth2-proxy/oauth2-proxy
-    tag: "v7.9.0"
+    tag: "v7.9.0"  # Latest version - confirmed current
     pullPolicy: IfNotPresent
   
   # OAuth2 Provider configuration
@@ -254,12 +254,12 @@ oauth2Proxy:
     # Upstream configuration - will be set automatically to point to nginx
     upstreams: ["http://127.0.0.1:8080"]
     
-    # Cookie configuration
+    # Cookie configuration - Financial compliance defaults
     cookieDomain: ""
     cookieSecure: true
     cookieHttpOnly: true
-    cookieSameSite: "lax"
-    cookieExpire: "168h"  # 7 days
+    cookieSameSite: "strict"  # Strict for financial compliance
+    cookieExpire: "30m"  # 30 minutes for financial compliance
     
     # Session configuration
     sessionStoreType: "cookie"
@@ -273,9 +273,15 @@ oauth2Proxy:
       - "^/health"
       - "^/ready"
     
-    # Additional command line arguments
-    extraArgs: []
-    # Example: ["--skip-provider-button", "--pass-basic-auth=false"]
+    # Additional command line arguments - Financial compliance defaults
+    extraArgs:
+      - "--request-logging=true"
+      - "--auth-logging=true"
+      - "--standard-logging=true"
+      - "--silence-ping-logging=false"
+      - "--cookie-csrf-per-request=true"
+      - "--cookie-csrf-expire=5m"
+    # Additional examples: ["--skip-provider-button", "--pass-basic-auth=false"]
   
   # Resource configuration
   resources:
