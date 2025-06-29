@@ -1,0 +1,129 @@
+graph TD
+    %% External Access
+    User[👤 User] -->|HTTP Request| LB[Load Balancer/Ingress]
+    LB -->|Port 80| KService[Kubernetes Service ClusterIP]
+    
+    %% Service Layer
+    KService -->|Port 80 to 8080| UIPod[UI Container Port 8080]
+    
+    %% UI Container Internal Architecture
+    subgraph UIPod["UI Container Port 8080"]
+        direction TB
+        Nginx[🔄 Nginx Reverse Proxy Port 8080]
+        NextJS[⚛️ Next.js App Port 8001]
+        Supervisor[👮 Supervisor Process Manager]
+        
+        Supervisor -.->|Manages| Nginx
+        Supervisor -.->|Manages| NextJS
+    end
+    
+    %% Backend Services
+    subgraph AppPod["App Container Port 8081"]
+        AppServer[🚀 App Server WebSocket and API Port 8081]
+    end
+    
+    subgraph ControllerPod["Controller Container Port 8083"]
+        Controller[⚙️ Controller Kubernetes API Port 8083]
+    end
+    
+    subgraph ToolsPod["Tools Container Port 8084"]
+        Tools[🔧 Tools Server MCP Tools Port 8084]
+    end
+    
+    %% Nginx Routing Logic
+    Nginx -->|"Frontend Routes /"| NextJS
+    Nginx -->|"Backend Routes /api/"| AppServer
+    Nginx -->|"WebSocket Routes /api/ws/"| AppServer
+    
+    %% Service Connections
+    KService -->|Port 8081| AppPod
+    KService -->|Port 8083| ControllerPod
+    KService -->|Port 8084| ToolsPod
+    
+    %% User Journey Flows
+    subgraph UserJourney["User Journey Flows"]
+        direction TB
+        
+        WebUI[🌐 Web UI Access]
+        API[📡 API Calls]
+        WS[🔌 WebSocket Connections]
+        
+        WebUI -->|Nginx Routes to| NextJS
+        API -->|Nginx Routes to| AppServer
+        WS -->|Nginx Routes to| AppServer
+    end
+    
+    %% OAuth2-Proxy Integration
+    subgraph OAuth2["OAuth2-Proxy Integration Optional"]
+        direction TB
+        OAuth2Proxy[🛡️ OAuth2-Proxy Port 4180]
+        AuthRequest[🔍 auth_request /oauth2/auth]
+        SignIn[🔑 Sign In /oauth2/sign_in]
+        
+        OAuth2Proxy -->|Auth Check| AuthRequest
+        OAuth2Proxy -->|Redirect| SignIn
+    end
+    
+    %% Nginx Role Details
+    subgraph NginxRole["Nginx Role and Responsibilities"]
+        direction TB
+        
+        ReverseProxy[🔄 Reverse Proxy Single Entry Point]
+        LoadBalancing[⚖️ Load Balancing Internal Services]
+        HeaderManagement[📋 Header Management X-Forwarded X-Real-IP]
+        WebSocketSupport[🔌 WebSocket Support Connection Upgrade]
+        Logging[📝 Logging Access and Error Logs]
+        AuthGateway[🛡️ Authentication Gateway OAuth2-Proxy Integration]
+        
+        ReverseProxy --> LoadBalancing
+        ReverseProxy --> HeaderManagement
+        ReverseProxy --> WebSocketSupport
+        ReverseProxy --> Logging
+        ReverseProxy --> AuthGateway
+    end
+    
+    %% Configuration Sources
+    subgraph Config["Configuration Management"]
+        direction TB
+        
+        MainBranch[📁 Main Branch Built-in nginx.conf Complete Configuration]
+        OAuth2Branch[🔐 OAuth2-Proxy Branch ConfigMap Override Auth Integration]
+        
+        MainBranch -.->|Static Config| Nginx
+        OAuth2Branch -.->|Dynamic Config| Nginx
+    end
+    
+    %% Network Flow Details
+    subgraph NetworkFlow["Network Flow"]
+        direction LR
+        
+        HTTPRequest[📨 HTTP Request] --> NginxProcess[🔄 Nginx Process]
+        NginxProcess --> RouteDecision{🤔 Route Decision}
+        
+        RouteDecision -->|"Path: /"| UIRoute[🌐 UI Route to Next.js:8001]
+        RouteDecision -->|"Path: /api/"| APIRoute[📡 API Route to App:8083]
+        RouteDecision -->|"Path: /api/ws/"| WSRoute[🔌 WebSocket Route to App:8081]
+        
+        UIRoute --> NextJSResponse[⚛️ Next.js Response]
+        APIRoute --> APIResponse[📡 API Response]
+        WSRoute --> WSResponse[🔌 WebSocket Connection]
+    end
+    
+    %% Optional Auth Flow
+    Nginx -.->|Optional Auth Check| OAuth2Proxy
+    OAuth2Proxy -.->|Auth Headers| Nginx
+    
+    %% Styling
+    classDef userClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef nginxClass fill:#fff3e0,stroke:#e65100,stroke-width:3px
+    classDef serviceClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef containerClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef flowClass fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef authClass fill:#ffebee,stroke:#b71c1c,stroke-width:2px
+    
+    class User,LB userClass
+    class Nginx,ReverseProxy,NginxProcess nginxClass
+    class KService,AppServer,Controller,Tools serviceClass
+    class UIPod,AppPod,ControllerPod,ToolsPod containerClass
+    class UserJourney,NetworkFlow,Config flowClass
+    class OAuth2,OAuth2Proxy,AuthRequest,SignIn authClass 

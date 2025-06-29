@@ -1,0 +1,86 @@
+sequenceDiagram
+    participant User as 👤 User
+    participant LB as 🌐 Load Balancer
+    participant Nginx as 🔄 Nginx Reverse Proxy
+    participant OAuth2 as 🛡️ OAuth2-Proxy
+    participant NextJS as ⚛️ Next.js UI
+    participant AppAPI as 🚀 App API Server
+    participant AppWS as 🔌 App WebSocket Server
+    participant Provider as 🔐 OAuth Provider
+
+    Note over User,Provider: User Journey: Unauthenticated Request
+
+    User->>+LB: GET / (Web UI Request)
+    LB->>+Nginx: Forward to Port 8080
+    
+    alt OAuth2-Proxy Enabled
+        Nginx->>+OAuth2: auth_request /oauth2/auth
+        OAuth2->>OAuth2: Check authentication
+        OAuth2-->>-Nginx: 401 Unauthorized
+        Nginx->>User: 302 Redirect to /oauth2/sign_in
+        
+        User->>+OAuth2: GET /oauth2/sign_in
+        OAuth2->>Provider: Redirect to OAuth Provider
+        Provider->>User: Authentication Page
+        User->>Provider: Login Credentials
+        Provider->>OAuth2: Authorization Code
+        OAuth2->>Provider: Exchange for Access Token
+        Provider->>OAuth2: Access Token + User Info
+        OAuth2->>User: Set Authentication Cookie
+        
+        User->>+LB: GET / (Retry with Cookie)
+        LB->>+Nginx: Forward to Port 8080
+        Nginx->>+OAuth2: auth_request /oauth2/auth
+        OAuth2->>OAuth2: Validate cookie
+        OAuth2-->>-Nginx: 202 Accepted + User Headers
+        Note over Nginx: X-Auth-Request-User<br/>X-Auth-Request-Email<br/>X-Auth-Request-Preferred-Username
+    else No Authentication
+        Note over Nginx: Direct routing without auth
+    end
+    
+    Nginx->>+NextJS: Proxy to localhost:8001
+    NextJS-->>-Nginx: HTML Response
+    Nginx-->>-LB: Response with Auth Headers
+    LB-->>-User: Web UI Loaded
+
+    Note over User,Provider: User Journey: API Request
+
+    User->>+LB: POST /api/agents (API Request)
+    LB->>+Nginx: Forward to Port 8080
+    
+    alt OAuth2-Proxy Enabled
+        Nginx->>+OAuth2: auth_request /oauth2/auth
+        OAuth2-->>-Nginx: 202 Accepted + User Headers
+    end
+    
+    Nginx->>+AppAPI: Proxy to localhost:8083/api/agents
+    Note over Nginx,AppAPI: Headers: X-Auth-Request-User<br/>X-Forwarded-For, X-Real-IP
+    AppAPI-->>-Nginx: JSON Response
+    Nginx-->>-LB: API Response
+    LB-->>-User: API Data
+
+    Note over User,Provider: User Journey: WebSocket Connection
+
+    User->>+LB: GET /api/ws/agents (WebSocket Upgrade)
+    LB->>+Nginx: Forward to Port 8080
+    
+    alt OAuth2-Proxy Enabled
+        Nginx->>+OAuth2: auth_request /oauth2/auth
+        OAuth2-->>-Nginx: 202 Accepted + User Headers
+    end
+    
+    Nginx->>+AppWS: Proxy to localhost:8081/api/ws/agents
+    Note over Nginx,AppWS: Connection: Upgrade<br/>Upgrade: websocket<br/>Auth Headers
+    AppWS-->>-Nginx: WebSocket Connection Established
+    Nginx-->>-LB: WebSocket Connection
+    LB-->>-User: Real-time Communication
+
+    Note over User,Provider: Nginx Configuration Differences
+
+    rect rgb(255, 248, 225)
+        Note over Nginx: Main Branch Configuration<br/>- Built-in nginx.conf<br/>- Direct proxy to services<br/>- No authentication<br/>- Full feature set
+    end
+
+    rect rgb(255, 235, 238)
+        Note over Nginx: OAuth2-Proxy Branch Configuration<br/>- ConfigMap override<br/>- auth_request directives<br/>- Authentication required<br/>- User context forwarding
+    end 
