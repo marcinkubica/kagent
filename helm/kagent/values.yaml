@@ -148,8 +148,8 @@ service:
       port: 8085
       targetPort: 8085
     oauth2Proxy:
-      port: 4180
-      targetPort: 4180
+      port: 8090
+      targetPort: 8090
 
 imagePullSecrets: []
 nameOverride: ""

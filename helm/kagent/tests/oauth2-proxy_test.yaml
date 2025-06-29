@@ -1,7 +1,6 @@
 suite: test oauth2-proxy
 templates:
   - deployment.yaml
-  - nginx-configmap.yaml
   - oauth2-proxy-secret.yaml
   - service.yaml
 tests:
@@ -11,7 +10,7 @@ tests:
       - deployment.yaml
     asserts:
       - isNull:
-          path: spec.template.spec.containers[3]
+          path: spec.template.spec.containers[5]
       - notContains:
           path: spec.template.spec.containers
           content:
@@ -41,7 +40,7 @@ tests:
         cookieSecret: "test-cookie-secret"
     asserts:
       - equal:
-          path: spec.template.spec.containers[3].name
+          path: spec.template.spec.containers[5].name
           value: oauth2-proxy
 
   # Test oauth2-proxy container configuration
@@ -56,20 +55,20 @@ tests:
         cookieSecret: "test-cookie-secret"
     asserts:
       - equal:
-          path: spec.template.spec.containers[3].name
+          path: spec.template.spec.containers[5].name
           value: oauth2-proxy
       - equal:
-          path: spec.template.spec.containers[3].image
+          path: spec.template.spec.containers[5].image
           value: "quay.io/oauth2-proxy/oauth2-proxy:v7.9.0"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--provider=github"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--upstream=http://127.0.0.1:8080"
       - contains:
-          path: spec.template.spec.containers[3].args
-          content: "--http-address=0.0.0.0:4180"
+          path: spec.template.spec.containers[5].args
+          content: "--http-address=0.0.0.0:8090"
 
   # Test service port configuration when oauth2-proxy is enabled
   - it: should expose oauth2-proxy port when enabled
@@ -84,10 +83,10 @@ tests:
     asserts:
       - equal:
           path: spec.ports[0].port
-          value: 8080
+          value: 80
       - equal:
           path: spec.ports[0].targetPort
-          value: 4180
+          value: 8090
 
   # Test oauth2-proxy health checks
   - it: should have oauth2-proxy health checks
@@ -101,17 +100,17 @@ tests:
         cookieSecret: "test-cookie-secret"
     asserts:
       - equal:
-          path: spec.template.spec.containers[3].livenessProbe.httpGet.path
+          path: spec.template.spec.containers[5].livenessProbe.httpGet.path
           value: /ping
       - equal:
-          path: spec.template.spec.containers[3].livenessProbe.httpGet.port
-          value: 4180
+          path: spec.template.spec.containers[5].livenessProbe.httpGet.port
+          value: 8090
       - equal:
-          path: spec.template.spec.containers[3].readinessProbe.httpGet.path
+          path: spec.template.spec.containers[5].readinessProbe.httpGet.path
           value: /ready
       - equal:
-          path: spec.template.spec.containers[3].readinessProbe.httpGet.port
-          value: 4180
+          path: spec.template.spec.containers[5].readinessProbe.httpGet.port
+          value: 8090
 
   # Test provider-specific configurations
   - it: should configure GitHub provider correctly
@@ -129,13 +128,13 @@ tests:
           team: "test-team"
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--provider=github"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--github-org=test-org"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--github-team=test-team"
 
   - it: should configure Google provider correctly
@@ -152,10 +151,10 @@ tests:
           hostedDomain: "example.com"
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--provider=google"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--google-hosted-domain=example.com"
 
   - it: should configure Azure provider correctly
@@ -172,10 +171,10 @@ tests:
           tenant: "test-tenant-id"
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--provider=azure"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--azure-tenant=test-tenant-id"
 
   - it: should configure OIDC provider correctly
@@ -192,10 +191,10 @@ tests:
           issuerUrl: "https://oidc.example.com"
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--provider=oidc"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--oidc-issuer-url=https://oidc.example.com"
 
   # Test environment variables and secrets
@@ -212,17 +211,17 @@ tests:
           external: false
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].env
+          path: spec.template.spec.containers[5].env
           content:
             name: OAUTH2_PROXY_CLIENT_ID
             value: "test-client-id"
       - contains:
-          path: spec.template.spec.containers[3].env
+          path: spec.template.spec.containers[5].env
           content:
             name: OAUTH2_PROXY_CLIENT_SECRET
             value: "test-client-secret"
       - contains:
-          path: spec.template.spec.containers[3].env
+          path: spec.template.spec.containers[5].env
           content:
             name: OAUTH2_PROXY_COOKIE_SECRET
             value: "test-cookie-secret"
@@ -241,7 +240,7 @@ tests:
           cookieSecretKey: "custom-cookie-secret"
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].env
+          path: spec.template.spec.containers[5].env
           content:
             name: OAUTH2_PROXY_CLIENT_ID
             valueFrom:
@@ -249,7 +248,7 @@ tests:
                 name: "custom-oauth2-secrets"
                 key: "custom-client-id"
       - contains:
-          path: spec.template.spec.containers[3].env
+          path: spec.template.spec.containers[5].env
           content:
             name: OAUTH2_PROXY_CLIENT_SECRET
             valueFrom:
@@ -276,61 +275,28 @@ tests:
           emailDomains: ["example.com", "company.org"]
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--cookie-domain=.example.com"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--cookie-secure=false"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--cookie-httponly=true"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--cookie-samesite=strict"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--cookie-expire=24h"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--email-domain=example.com"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--email-domain=company.org"
 
-  # Test nginx configuration
-  - it: should create nginx configmap with oauth2-proxy config
-    templates:
-      - nginx-configmap.yaml
-    set:
-      oauth2Proxy:
-        enabled: true
-        clientId: "test-client-id"
-        clientSecret: "test-client-secret"
-        cookieSecret: "test-cookie-secret"
-    asserts:
-      - matchRegex:
-          path: data["nginx.conf"]
-          pattern: "upstream oauth2_proxy"
-      - matchRegex:
-          path: data["nginx.conf"]
-          pattern: "location /oauth2/"
-      - matchRegex:
-          path: data["nginx.conf"]
-          pattern: "auth_request /oauth2/auth"
 
-  - it: should create nginx configmap without oauth2-proxy when disabled
-    templates:
-      - nginx-configmap.yaml
-    asserts:
-      - notMatchRegex:
-          path: data["nginx.conf"]
-          pattern: "upstream oauth2_proxy"
-      - notMatchRegex:
-          path: data["nginx.conf"]
-          pattern: "location /oauth2/"
-      - notMatchRegex:
-          path: data["nginx.conf"]
-          pattern: "auth_request"
 
   # Test secret creation
   - it: should create oauth2-proxy secret when external is false
@@ -389,16 +355,16 @@ tests:
             memory: "256Mi"
     asserts:
       - equal:
-          path: spec.template.spec.containers[3].resources.requests.cpu
+          path: spec.template.spec.containers[5].resources.requests.cpu
           value: "100m"
       - equal:
-          path: spec.template.spec.containers[3].resources.requests.memory
+          path: spec.template.spec.containers[5].resources.requests.memory
           value: "128Mi"
       - equal:
-          path: spec.template.spec.containers[3].resources.limits.cpu
+          path: spec.template.spec.containers[5].resources.limits.cpu
           value: "500m"
       - equal:
-          path: spec.template.spec.containers[3].resources.limits.memory
+          path: spec.template.spec.containers[5].resources.limits.memory
           value: "256Mi"
 
   # Test skip auth paths
@@ -417,10 +383,10 @@ tests:
             - "^/metrics"
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--skip-auth-regex=^/api/health"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--skip-auth-regex=^/metrics"
 
   # Test extra args
@@ -438,8 +404,8 @@ tests:
           - "--another-arg"
     asserts:
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--custom-arg=value"
       - contains:
-          path: spec.template.spec.containers[3].args
+          path: spec.template.spec.containers[5].args
           content: "--another-arg"

@@ -26,10 +26,6 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       serviceAccountName: {{ include "kagent.fullname" . }}
-      volumes:
-        - name: nginx-config
-          configMap:
-            name: {{ include "kagent.fullname" . }}-nginx-config
       containers:
         - name: controller
           args:
@@ -110,10 +106,6 @@ spec:
             - name: http-ui
               containerPort: {{ .Values.service.ports.ui.targetPort }}
               protocol: TCP
-          volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
-              subPath: nginx.conf
           resources:
             {{- toYaml .Values.ui.resources | nindent 12 }}
           readinessProbe:
@@ -202,11 +194,9 @@ spec:
           image: "{{ .Values.oauth2Proxy.image.registry }}/{{ .Values.oauth2Proxy.image.repository }}:{{ .Values.oauth2Proxy.image.tag }}"
           imagePullPolicy: {{ .Values.oauth2Proxy.image.pullPolicy }}
           args:
-            - --http-address=0.0.0.0:4180
+            - --http-address=0.0.0.0:8090
             - --metrics-address=0.0.0.0:44180
-            {{- range .Values.oauth2Proxy.config.upstreams }}
-            - --upstream={{ . }}
-            {{- end }}
+            - --upstream=http://127.0.0.1:8080
             - --provider={{ .Values.oauth2Proxy.provider }}
             {{- if .Values.oauth2Proxy.oidc.issuerUrl }}
             - --oidc-issuer-url={{ .Values.oauth2Proxy.oidc.issuerUrl }}
@@ -278,7 +268,7 @@ spec:
             {{- end }}
           ports:
             - name: http
-              containerPort: 4180
+              containerPort: 8090
               protocol: TCP
             - name: metrics
               containerPort: 44180
@@ -288,13 +278,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /ping
-              port: 4180
+              port: 8090
             initialDelaySeconds: 10
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /ready
-              port: 4180
+              port: 8090
             initialDelaySeconds: 5
             periodSeconds: 5
         {{- end }}
