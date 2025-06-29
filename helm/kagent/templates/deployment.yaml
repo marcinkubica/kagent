@@ -228,7 +228,6 @@ spec:
             - --cookie-samesite={{ .Values.oauth2Proxy.config.cookieSameSite }}
             - --cookie-expire={{ .Values.oauth2Proxy.config.cookieExpire }}
             - --session-store-type={{ .Values.oauth2Proxy.config.sessionStoreType }}
-            - --log-level={{ .Values.oauth2Proxy.config.logLevel }}
             {{- range .Values.oauth2Proxy.config.skipAuthPaths }}
             - --skip-auth-regex={{ . }}
             {{- end }}

@@ -211,7 +211,7 @@ cilium-manager-agent:
 cilium-debug-agent:
   enabled: true
 
-# OAuth2 Proxy configuration
+
 oauth2Proxy:
   enabled: false
   image:
@@ -224,8 +224,8 @@ oauth2Proxy:
   provider: "github"  # github, google, azure, oidc, etc.
   
   # OAuth2 client configuration (typically set via secrets)
-  clientId: ""
-  clientSecret: ""
+  clientId: ""  # Set your GitHub OAuth App Client ID
+  clientSecret: ""  # Set your GitHub OAuth App Client Secret  
   cookieSecret: ""  # Generate with: python -c 'import secrets; print(secrets.token_urlsafe(32))'
   
   # OIDC configuration (for generic OIDC providers)
@@ -234,7 +234,7 @@ oauth2Proxy:
     
   # GitHub specific configuration
   github:
-    org: ""  # Optional: restrict to specific GitHub org
+    org: "example-org"  # Restrict to specific GitHub org (change this!)
     team: "" # Optional: restrict to specific GitHub team
     
   # Google specific configuration  
@@ -264,8 +264,8 @@ oauth2Proxy:
     # Session configuration
     sessionStoreType: "cookie"
     
-    # Logging
-    logLevel: "info"
+    # Logging - oauth2-proxy doesn't have --log-level flag
+    # logLevel: "info"  # Commented out - not supported
     
     # Skip authentication for specific paths
     skipAuthPaths:
@@ -302,7 +302,7 @@ oauth2Proxy:
   secrets:
     # If true, expects secrets to be provided externally
     # If false, will create secret from values above (not recommended for production)
-    external: true
+    external: false  # Set to true in production with external secret management
     secretName: "oauth2-proxy-secrets"
     
     # Keys in the secret
