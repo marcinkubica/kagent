@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "kagent.labels" . | nindent 4 }}
 rules:
+# Kagent's own custom resources - READ access for controller and handlers
 - apiGroups:
   - kagent.dev
   resources:
@@ -17,6 +18,8 @@ rules:
   - get
   - list
   - watch
+
+# Status access for kagent resources
 - apiGroups:
   - kagent.dev
   resources:
@@ -29,54 +32,44 @@ rules:
   - get
   - patch
   - update
+
+# Core resources - SPECIFIC resources only (used by tools container)
 - apiGroups:
   - ""
   resources:
-  - "*"
+  - pods
+  - services
+  - configmaps
+  - secrets
+  - events
+  - namespaces
+  - nodes
   verbs:
   - get
   - list
   - watch
+
+# Pod logs access (used by tools container for troubleshooting)
 - apiGroups:
-  - "apps"
+  - ""
   resources:
-  - "*"
+  - pods/log
   verbs:
   - get
-  - list
-  - watch
+
+# Apps resources - SPECIFIC resources only (used by tools container)
 - apiGroups:
-  - "batch"
+  - apps
   resources:
-  - "*"
+  - deployments
+  - replicasets
+  - daemonsets
+  - statefulsets
   verbs:
   - get
   - list
   - watch
-- apiGroups:
-  - "rbac.authorization.k8s.io"
-  resources:
-  - "*"
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - "apiextensions.k8s.io"
-  resources:
-  - "*"
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - gateway.networking.k8s.io/v1
-  resources:
-  - "*"
-  verbs:
-  - get
-  - list
-  - watch
+
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
@@ -86,6 +79,7 @@ metadata:
   labels:
     {{- include "kagent.labels" . | nindent 4 }}
 rules:
+# Kagent's own custom resources - ONLY what the controller manages
 - apiGroups:
   - kagent.dev
   resources:
@@ -99,48 +93,58 @@ rules:
   - update
   - patch
   - delete
+
+# Status updates for kagent resources
+- apiGroups:
+  - kagent.dev
+  resources:
+  - agents/status
+  - modelconfigs/status
+  - teams/status
+  - toolservers/status
+  - memories/status
+  verbs:
+  - get
+  - patch
+  - update
+
+# Finalizers for kagent resources
+- apiGroups:
+  - kagent.dev
+  resources:
+  - agents/finalizers
+  - modelconfigs/finalizers
+  - teams/finalizers
+  - toolservers/finalizers
+  - memories/finalizers
+  verbs:
+  - update
+
+# Secrets - ONLY for API key management (used by HTTP handlers)
 - apiGroups:
   - ""
   resources:
-  - "*"
+  - secrets
   verbs:
   - create
   - update
   - patch
   - delete
+  - get
+  - list
+  - watch
+
+# ConfigMaps - ONLY for memory storage (used by memory handlers)
 - apiGroups:
-  - "apps"
+  - ""
   resources:
-  - "*"
+  - configmaps
   verbs:
   - create
   - update
   - patch
   - delete
-- apiGroups:
-  - "batch"
-  resources:
-  - "*"
-  verbs:
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - "apiextensions.k8s.io"
-  resources:
-  - "*"
-  verbs:
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - gateway.networking.k8s.io/v1
-  resources:
-  - "*"
-  verbs:
-  - create
-  - update
-  - patch
-  - delete
+  - get
+  - list
+  - watch
+
