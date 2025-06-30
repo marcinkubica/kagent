@@ -1,3 +1,13 @@
+# Kagent RBAC - Optimized for Multi-Namespace Support (Post PR #405)
+# These ClusterRoles provide minimal permissions required for kagent's
+# multi-namespace functionality while maintaining security best practices.
+# 
+# Key features:
+# - Cross-namespace resource references (namespace/name format)
+# - Specific resource targeting (no wildcard permissions)
+# - Separation of read/write permissions
+# - Tools container troubleshooting capabilities
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -19,7 +29,7 @@ rules:
   - list
   - watch
 
-# Status access for kagent resources
+# Status access for kagent resources - READ-ONLY for getter role
 - apiGroups:
   - kagent.dev
   resources:
@@ -30,17 +40,24 @@ rules:
   - memories/status
   verbs:
   - get
-  - patch
-  - update
 
-# Core resources - SPECIFIC resources only (used by tools container)
+# Core resources - SPECIFIC resources for cross-namespace access (ModelConfig API keys)
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+
+# Tools container troubleshooting - READ-ONLY cluster access
 - apiGroups:
   - ""
   resources:
   - pods
   - services
-  - configmaps
-  - secrets
   - events
   - namespaces
   - nodes
@@ -49,7 +66,7 @@ rules:
   - list
   - watch
 
-# Pod logs access (used by tools container for troubleshooting)
+# Pod logs for troubleshooting
 - apiGroups:
   - ""
   resources:
@@ -57,7 +74,7 @@ rules:
   verbs:
   - get
 
-# Apps resources - SPECIFIC resources only (used by tools container)
+# Apps resources - READ-ONLY for tools container
 - apiGroups:
   - apps
   resources:
@@ -65,6 +82,17 @@ rules:
   - replicasets
   - daemonsets
   - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+
+# Batch resources - READ-ONLY for tools container
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
   verbs:
   - get
   - list
@@ -79,7 +107,7 @@ metadata:
   labels:
     {{- include "kagent.labels" . | nindent 4 }}
 rules:
-# Kagent's own custom resources - ONLY what the controller manages
+# Kagent custom resources - FULL access across all namespaces (required for multi-namespace support)
 - apiGroups:
   - kagent.dev
   resources:
@@ -120,7 +148,7 @@ rules:
   verbs:
   - update
 
-# Secrets - ONLY for API key management (used by HTTP handlers)
+# Secrets - ONLY for ModelConfig API key management (cross-namespace access required)
 - apiGroups:
   - ""
   resources:
@@ -134,7 +162,7 @@ rules:
   - list
   - watch
 
-# ConfigMaps - ONLY for memory storage (used by memory handlers)
+# ConfigMaps - ONLY for configuration management
 - apiGroups:
   - ""
   resources:
@@ -147,4 +175,13 @@ rules:
   - get
   - list
   - watch
+
+# Events - For status reporting
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
 
