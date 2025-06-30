@@ -110,6 +110,6 @@ For instructions on how to contribute to the kagent project, see the [CONTRIBUTI
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=kagent-dev/kagent&type=Date&theme=dark" />
    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=kagent-dev/kagent&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=kagent-dev/kagent&type=Date" />
+   <img alt="Star history of kagent-dev/kagent over time" src="https://api.star-history.com/svg?repos=kagent-dev/kagent&type=Date" />
  </picture>
 </a>
