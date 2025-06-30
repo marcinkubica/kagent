@@ -488,7 +488,7 @@ This analysis demonstrates that kagent's current RBAC implementation is **not su
 
 ---
 
-**Report Generated:** January 2025  
+**Report Generated:** June 30, 2025  
 **Analysis Type:** Helm Chart Security Assessment  
 **Scope:** kagent Helm chart RBAC configuration options  
 **Methodology:** Static analysis of Helm templates and values files  

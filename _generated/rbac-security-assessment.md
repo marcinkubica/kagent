@@ -1,6 +1,6 @@
 # Kagent RBAC Security Assessment Report
 
-**Date:** June 2025  
+**Date:** June 30, 2025  
 **Assessment Scope:** kagent/ folder RBAC permissions analysis  
 **Risk Level:** 🔴 CRITICAL
 
@@ -375,7 +375,7 @@ The security risk is compounded by the fact that multiple agents have overlappin
 
 ---
 
-**Report Generated:** January 2025  
+**Report Generated:** June 30, 2025  
 **Assessment Type:** Static Code Analysis  
 **Scope:** kagent/ folder RBAC configurations  
 **Methodology:** Manual review of YAML manifests and Helm templates 
