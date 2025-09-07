@@ -201,10 +201,10 @@ class HelpScreen(ModalScreen[None]):
 class KAgentinoApp(App):
     CSS = """
     Screen { layout: horizontal; background: $surface; }
-    #left { width: 30%; min-width:28; border: panel $accent; }
+    #left { width: 24%; min-width:28; border: panel $accent; }
     #chat { layout: vertical; border: panel $primary; }
     #chat-view { padding: 0 1; height: 1fr; }
-    #input { dock: bottom; height:6; }
+    #input { dock: bottom; height:5; }
     #chat-input { width: 100%; height:100%; overflow: auto; border: panel $accent; }
     #spacer { height:1; }
     #status { dock: bottom; height:1; background: $accent-darken-3; color: $text; }
@@ -214,6 +214,8 @@ class KAgentinoApp(App):
     /* Hover highlight for agent list items */
     #agents ListItem:hover { background: $accent-darken-1; text-style: bold; }
     """
+    # Title shown in the Header (otherwise Textual defaults to the class name)
+    TITLE = "kagentino"
 
     BINDINGS = [
         Binding("q", "quit", "Quit"),
@@ -239,6 +241,21 @@ class KAgentinoApp(App):
         agents = await self.backend.list_agents()
         await self.query_one(AgentList).set_agents(agents)
         self.query_one(StatusBar).status = f"Loaded {len(agents)} agents"
+        # Dynamically size the left pane width to fit the longest agent name with padding.
+        try:
+            if agents:
+                longest = max(len(pretty_agent_name(a)) for a in agents)
+                # Rough character cell to width mapping; add padding + borders.
+                # Minimum width 20, maximum 60 columns to avoid overly wide sidebar.
+                target_cols = min(60, max(20, longest + 6))  # +6 for padding, border, scroll bar space
+                left_container = self.query_one('#left')
+                # Apply an absolute width in columns (characters). Textual supports int assignment.
+                left_container.styles.width = target_cols
+                # Ensure min-width isn't larger than chosen width so shrink applies.
+                left_container.styles.min_width = min(int(getattr(left_container.styles, 'min_width', 0) or 0), target_cols) or None
+        except Exception:
+            # Non-fatal; keep default if anything goes wrong.
+            self.log("Could not auto-size left pane", level="warning")
 
     def compose(self) -> ComposeResult:  # type: ignore[override]
         yield Header(name="kagentino")
@@ -288,7 +305,8 @@ class KAgentinoApp(App):
         self.query_one(StatusBar).status = "Streaming..."
         try:
             async for msg in self.backend.stream_message(agent, session_id, text):
-                if self.is_closed:
+                # Break out if app no longer running (Textual provides is_running())
+                if hasattr(self, 'is_running') and not self.is_running:
                     break
                 if msg.role == "user":
                     continue  # already displayed
