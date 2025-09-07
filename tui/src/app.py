@@ -11,6 +11,8 @@ from textual.containers import Container, Horizontal
 from textual.message import Message as TextualMessage
 from textual.reactive import reactive
 from textual.widgets import Footer, Header, Input, Static, ListView, ListItem, Label
+from rich.table import Table
+from rich.text import Text
 try:  # Textual >=0.59 provides TextArea
     from textual.widgets import TextArea  # type: ignore
 except Exception:  # pragma: no cover
@@ -99,36 +101,66 @@ class ChatView(Static):
 
         Each session dict may contain: id, name, created_at.
         """
-        if not sessions:
-            body = f"[b]{pretty_agent_name(agent)}[/b]\n(no sessions yet)"
-        else:
-            lines = []
-            for sess in sessions:
-                if isinstance(sess, dict):
-                    sid = sess.get("id", "?")
-                    short = sid[:8]
-                    name = sess.get("name") or "-"
-                    lines.append(f"• {name} ({short})")
-                else:
-                    lines.append(f"• {sess}")
-            rendered = "\n".join(lines)
-            body = f"[b]{pretty_agent_name(agent)} sessions[/b]\n{rendered}"
+        title = f"Sessions for {pretty_agent_name(agent)}" if agent else "Sessions"
+        body = self._render_sessions_table(sessions, title)
         self.update(body)
 
     def show_all_sessions(self, sessions):  # sessions: List[Dict]
+        body = self._render_sessions_table(sessions, "All sessions")
+        self.update(body)
+
+    def _render_sessions_table(self, sessions, title: str) -> str:
         if not sessions:
-            self.update("(no sessions)")
-            return
-        lines = ["[b]All sessions[/b]", "ID(short)  NAME         AGENT"]
-        for sess in sessions[:200]:
+            return f"[b]{title}[/b]\n[dim](no sessions)"
+
+        table = Table(
+            title=title,
+            expand=True,
+            header_style="bold cyan",
+            box=None,
+            show_header=True,
+            padding=(0, 1),
+        )
+        table.add_column("#", style="dim", no_wrap=True)
+        table.add_column("ID", style="magenta", overflow="fold")
+        table.add_column("NAME", style="green")
+        table.add_column("AGENT", style="yellow")
+        table.add_column("CREATED", style="cyan", no_wrap=True)
+
+        for idx, sess in enumerate(sessions, 1):
             if not isinstance(sess, dict):
                 continue
             sid = str(sess.get("id", ""))
-            short = sid[:8]
-            name = sess.get("name") or "-"
+            sess_name = sess.get("name") or ""
             agent_id = sess.get("agent_id") or ""
-            lines.append(f"{short:<9} {name:<12} {agent_id}")
-        self.update("\n".join(lines))
+            if agent_id.startswith("kagent__NS__"):
+                agent_id = agent_id.split("kagent__NS__", 1)[1]
+            created_raw = sess.get("created_at") or ""
+            if created_raw and created_raw.endswith("Z") and "." in created_raw:
+                try:
+                    created = created_raw.split(".", 1)[0] + "Z"
+                except Exception:  # pragma: no cover
+                    created = created_raw
+            else:
+                created = created_raw
+            display_id = sid if len(sid) <= 32 else f"{sid[:24]}…{sid[-4:]}"
+            table.add_row(str(idx), display_id, sess_name, agent_id, created)
+            if idx >= 200:
+                break
+
+        from rich.console import Console
+        render_width = 100
+        try:
+            sz = getattr(self, "size", None)
+            if sz and getattr(sz, "width", None):
+                render_width = int(sz.width)
+        except Exception:  # pragma: no cover
+            pass
+        console = Console(width=render_width, record=True, force_terminal=True)
+        console.print(table)
+        rendered = console.export_text(clear=False)
+        lines = [ln for ln in rendered.splitlines() if ln.strip() != ""]
+        return "\n".join(lines) + "\n"
 
 
 class InputBar(Horizontal):
@@ -251,7 +283,7 @@ class KAgentinoApp(App):
     #agents ListItem:hover { background: $accent-darken-1; text-style: bold; }
     """
     # Title shown in the Header (otherwise Textual defaults to the class name)
-    TITLE = "kagentino"
+    TITLE = "kagentui"
 
     BINDINGS = [
         Binding("q", "quit", "Quit"),

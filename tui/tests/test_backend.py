@@ -1,7 +1,7 @@
 import asyncio
 import pytest
 
-from kagentino.backend import BackendClient, Agent
+from src.backend import BackendClient, Agent
 
 
 @pytest.mark.asyncio
