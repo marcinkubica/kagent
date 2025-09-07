@@ -94,6 +94,42 @@ class ChatView(Static):
         self.lines.clear()
         self.update("")
 
+    def show_sessions(self, agent: Agent, sessions):  # sessions: List[Dict]
+        """Display sessions list for an agent.
+
+        Each session dict may contain: id, name, created_at.
+        """
+        if not sessions:
+            body = f"[b]{pretty_agent_name(agent)}[/b]\n(no sessions yet)"
+        else:
+            lines = []
+            for sess in sessions:
+                if isinstance(sess, dict):
+                    sid = sess.get("id", "?")
+                    short = sid[:8]
+                    name = sess.get("name") or "-"
+                    lines.append(f"• {name} ({short})")
+                else:
+                    lines.append(f"• {sess}")
+            rendered = "\n".join(lines)
+            body = f"[b]{pretty_agent_name(agent)} sessions[/b]\n{rendered}"
+        self.update(body)
+
+    def show_all_sessions(self, sessions):  # sessions: List[Dict]
+        if not sessions:
+            self.update("(no sessions)")
+            return
+        lines = ["[b]All sessions[/b]", "ID(short)  NAME         AGENT"]
+        for sess in sessions[:200]:
+            if not isinstance(sess, dict):
+                continue
+            sid = str(sess.get("id", ""))
+            short = sid[:8]
+            name = sess.get("name") or "-"
+            agent_id = sess.get("agent_id") or ""
+            lines.append(f"{short:<9} {name:<12} {agent_id}")
+        self.update("\n".join(lines))
+
 
 class InputBar(Horizontal):
     class Submitted(TextualMessage):
@@ -170,7 +206,7 @@ class StatusBar(Static):
         self.update(f"[b]{self.status}[/b] | Agent: {self.agent} | Session: {self.session}")
 
 
-class HelpScreen(ModalScreen[None]):
+class HelpScreen(ModalScreen):  # type: ignore[type-arg]
     def compose(self) -> ComposeResult:  # type: ignore[override]
         help_text = """
         [b]kagentino Help[/b]\n
@@ -222,6 +258,7 @@ class KAgentinoApp(App):
         Binding("ctrl+c", "quit", "Quit"),
         Binding("tab", "focus_next", "Focus"),
         Binding("a", "focus_agents", "Agents"),
+    Binding("s", "show_sessions", "Sessions"),
         Binding("f", "focus_input", "Input"),
         Binding("?", "toggle_help", "Help"),
     ]
@@ -241,6 +278,12 @@ class KAgentinoApp(App):
         agents = await self.backend.list_agents()
         await self.query_one(AgentList).set_agents(agents)
         self.query_one(StatusBar).status = f"Loaded {len(agents)} agents"
+        # Load all sessions to show initially
+        try:
+            sessions = await self.backend.list_all_sessions()
+            self.query_one(ChatView).show_all_sessions(sessions)
+        except Exception:  # pragma: no cover
+            pass
         # Dynamically size the left pane width to fit the longest agent name with padding.
         try:
             if agents:
@@ -273,11 +316,8 @@ class KAgentinoApp(App):
         sb = self.query_one(StatusBar)
         sb.status = "Agent selected"
         sb.agent = pretty_agent_name(message.agent)
-        # Ensure session id
-        if message.agent.ref not in self.session_ids:
-            self.session_ids[message.agent.ref] = await self.backend.create_session(message.agent)
-        session_id = self.session_ids[message.agent.ref]
-        sb.session = session_id[:8]
+        # No implicit session creation; will create on first message
+        sb.session = "-"
         # Update input placeholder
         try:
             input_widget = self.query_one('#chat-input')  # type: ignore
@@ -288,12 +328,38 @@ class KAgentinoApp(App):
                 setattr(input_widget, 'border_title', label)
         except Exception:  # pragma: no cover
             pass
+        # Show sessions list
+        try:
+            sessions = await self.backend.list_sessions(message.agent)
+            self.query_one(ChatView).show_sessions(message.agent, sessions)
+        except Exception:  # pragma: no cover
+            pass
+
+    async def on_list_view_highlighted(self, event: ListView.Highlighted):  # type: ignore[override]
+        """When user hovers / moves cursor in agent list, show sessions for that agent."""
+        try:
+            agent_list = self.query_one(AgentList)
+            agent = agent_list.current_agent()
+            if not agent:
+                return
+            sessions = await self.backend.list_sessions(agent)
+            self.query_one(ChatView).show_sessions(agent, sessions)
+            sb = self.query_one(StatusBar)
+            sb.status = "Agent focus"
+            sb.agent = pretty_agent_name(agent)
+        except Exception:  # pragma: no cover
+            pass
 
     async def handle_input_bar_submitted(self, message: InputBar.Submitted):  # type: ignore[override]
         if not self.current_agent:
             self.query_one(StatusBar).status = "No agent selected"
             return
+        # Ensure session exists (lazy creation)
+        if self.current_agent.ref not in self.session_ids:
+            sid = await self.backend.create_session(self.current_agent)
+            self.session_ids[self.current_agent.ref] = sid
         session_id = self.session_ids[self.current_agent.ref]
+        self.query_one(StatusBar).session = session_id[:8]
         # Cancel any existing streaming
         if self.streaming_task and not self.streaming_task.done():
             self.streaming_task.cancel()
@@ -328,6 +394,17 @@ class KAgentinoApp(App):
 
     def action_focus_agents(self) -> None:
         self.query_one(AgentList).focus()
+
+    async def action_show_sessions(self) -> None:  # type: ignore[override]
+        try:
+            sessions = await self.backend.list_all_sessions()
+            self.query_one(ChatView).show_all_sessions(sessions)
+            sb = self.query_one(StatusBar)
+            sb.status = "All sessions"
+            sb.agent = "*"
+            sb.session = "-"
+        except Exception:  # pragma: no cover
+            pass
 
     def action_toggle_help(self) -> None:
         if self.screen_stack and isinstance(self.screen_stack[-1], HelpScreen):  # type: ignore[attr-defined]

@@ -7,7 +7,7 @@ import random
 import string
 import time
 from dataclasses import dataclass, field
-from typing import AsyncIterator, List, Optional
+from typing import AsyncIterator, List, Optional, Dict, Any
 
 import httpx
 
@@ -42,10 +42,16 @@ class BackendClient:
     endpoints are unreachable to allow UI development offline.
     """
 
+    base_url: str
+    namespace: str
+    _http: httpx.AsyncClient
+    # No local session store; sessions are managed by server
+
     def __init__(self, base_url: str, namespace: str = "default", timeout: float = 10.0):
         self.base_url = base_url.rstrip("/")
         self.namespace = namespace
         self._http = httpx.AsyncClient(timeout=timeout)
+    # No in-memory sessions
 
     async def list_agents(self) -> List[Agent]:
         try:
@@ -72,10 +78,75 @@ class BackendClient:
         ]
 
     async def create_session(self, agent: Agent, name: Optional[str] = None) -> str:
-        # Real call would POST /api/sessions {name, agentRef}
-        if name is None:
-            name = self._rand_id("sess")
-        return name  # placeholder session ID
+        """Create a session for an agent via HTTP.
+
+        POST /api/sessions with JSON { name?, agent_ref }
+        Returns session id or raises BackendError.
+        """
+        payload: Dict[str, Any] = {"agent_ref": agent.ref}
+        if name:
+            payload["name"] = name
+        try:
+            resp = await self._http.post(f"{self.base_url}/api/sessions", json=payload)
+            if resp.status_code not in (200, 201):
+                raise BackendError(f"create_session status={resp.status_code}")
+            data = resp.json()
+            session = data.get("data") or data.get("session") or data
+            # session may be nested (api.NewResponse) => data is object
+            sid = session.get("id") if isinstance(session, dict) else None
+            if not sid:
+                raise BackendError("missing session id in response")
+            return sid
+        except Exception as e:  # fallback offline stub
+            # Offline stub: just generate ephemeral id
+            return self._rand_id("sess")
+
+    async def list_sessions(self, agent: Agent) -> List[Dict[str, Any]]:
+        """List sessions for a specific agent via HTTP.
+
+        GET /api/sessions/agent/{namespace}/{name}
+        Returns list of sessions (dicts). On failure returns empty list.
+        """
+        try:
+            url = f"{self.base_url}/api/sessions/agent/{agent.namespace}/{agent.name}"
+            resp = await self._http.get(url)
+            if resp.status_code != 200:
+                raise BackendError(f"list_sessions status={resp.status_code}")
+            body = resp.json()
+            sessions = body.get("data") or []
+            # Expect list of objects with id, name, created_at
+            valid: List[Dict[str, Any]] = []
+            for item in sessions:
+                if not isinstance(item, dict):
+                    continue
+                if "id" in item:
+                    valid.append(item)
+            # Sort newest first by created_at if available
+            valid.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+            return valid
+        except Exception:
+            return []
+
+    async def list_all_sessions(self) -> List[Dict[str, Any]]:
+        """List all sessions (GET /api/sessions). Returns list of session dicts."""
+        try:
+            resp = await self._http.get(f"{self.base_url}/api/sessions")
+            if resp.status_code != 200:
+                raise BackendError(f"list_all_sessions status={resp.status_code}")
+            body = resp.json()
+            sessions = body.get("data") or []
+            if not isinstance(sessions, list):
+                return []
+            # Sort newest first
+            def _created_at(item: Any) -> str:
+                if isinstance(item, dict):
+                    val = item.get("created_at")
+                    return str(val) if val is not None else ""
+                return ""
+            sessions.sort(key=_created_at, reverse=True)
+            return sessions
+        except Exception:
+            return []
 
     async def stream_message(self, agent: Agent, session_id: str, text: str) -> AsyncIterator[Message]:
         """Stream assistant response.
