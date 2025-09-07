@@ -241,7 +241,7 @@ class StatusBar(Static):
 class HelpScreen(ModalScreen):  # type: ignore[type-arg]
     def compose(self) -> ComposeResult:  # type: ignore[override]
         help_text = """
-        [b]kagentino Help[/b]\n
+        [b]Help[/b]\n
         [b]Navigation[/b]
         Up/Down or k/j  : Navigate agents
         Enter           : Select agent (when agent list focus)
@@ -266,7 +266,7 @@ class HelpScreen(ModalScreen):  # type: ignore[type-arg]
         self.app.pop_screen()
 
 
-class KAgentinoApp(App):
+class KagentUI(App):
     CSS = """
     Screen { layout: horizontal; background: $surface; }
     #left { width: 24%; min-width:28; border: panel $accent; }
@@ -333,7 +333,7 @@ class KAgentinoApp(App):
             self.log("Could not auto-size left pane", level="warning")
 
     def compose(self) -> ComposeResult:  # type: ignore[override]
-        yield Header(name="kagentino")
+        yield Header(name="kagentui")
         with Container(id="left"):
             yield AgentList(id="agents")
         with Container(id="chat"):
@@ -451,7 +451,7 @@ def run():
     parser.add_argument("--namespace", default="default")
     args = parser.parse_args()
     backend = BackendClient(args.base_url, namespace=args.namespace)
-    app = KAgentinoApp(backend)
+    app = KagentUI(backend)
     app.run()
 
 

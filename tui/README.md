@@ -1,6 +1,6 @@
-# kagentino
+# kagentui
 
-Textual-based rich TUI for interacting with KAgent agents over the A2A protocol.
+Textual-based rich TUI for interacting with kagent agents over the A2A protocol.
 
 ## Goals (initial cut)
 - Browse agents
